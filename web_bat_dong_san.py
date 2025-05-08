@@ -134,7 +134,7 @@ def crawl_data():
     
     
 # 7. Set lịch chạy vào lúc 6h sáng hằng ngày.
-schedule.every().day.at("06:0000").do(crawl_data)
+schedule.every().day.at("06:00").do(crawl_data)
 while True:
     schedule.run_pending()
     time.sleep(60)
