@@ -1,4 +1,4 @@
-# Web Scraping Bất Động Sản
+# Web Bất Động Sản
 
 Script tự động thu thập dữ liệu bất động sản từ trang alonhadat.com.vn.
 
@@ -17,16 +17,17 @@ Script tự động thu thập dữ liệu bất động sản từ trang alonha
 ## Yêu cầu
 
 - Python 3.x
-- Các thư viện Python:
-  - selenium
-  - pandas
-  - schedule
+- Các thư viện Python (được liệt kê trong file requirements.txt):
+  - selenium==4.18.1
+  - pandas==2.2.1
+  - schedule==1.2.1
+  - webdriver-manager==4.0.1
 
 ## Cài đặt
 
 1. Cài đặt các thư viện cần thiết:
 ```bash
-pip install selenium pandas schedule
+pip install -r requirements.txt
 ```
 
 2. Cài đặt Chrome WebDriver:
