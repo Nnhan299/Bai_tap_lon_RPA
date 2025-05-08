@@ -9,15 +9,16 @@ import datetime
 import schedule
 
 def crawl_data():
+    # 1. Vào website đã chọn.
     driver = webdriver.Chrome()
     driver.get('https://alonhadat.com.vn/')
     wait = WebDriverWait(driver, 10)
 
-    # 1. Click nút "Tìm kiếm nâng cao"
+
     advanced_search = wait.until(EC.element_to_be_clickable((By.XPATH, "//a[contains(text(),'Tìm kiếm nâng cao')]")))
     advanced_search.click()
 
-    # 2. Chọn ngẫu nhiên 1 Tỉnh/Thành
+    # 2. Click chọn bất kì Tỉnh/TP(Hà Nội, Đà Nẵng, Hồ Chí Minh, …). 
     province_select = wait.until(EC.presence_of_element_located((By.ID, "tinh")))
     province_options = province_select.find_elements(By.TAG_NAME, "option")
     popular_provinces = ['Hồ Chí Minh', 'Hà Nội', 'Đà Nẵng', 'Bình Dương', 'Đồng Nai', 'Hải Phòng']
@@ -25,20 +26,20 @@ def crawl_data():
     random_province = random.choice(filtered_options)
     random_province.click()
 
-    # 3. Chọn ngẫu nhiên 1 loại BĐS
+    # Chọn bất kì loại nhà đất(Căn hộ chung cư, nhà, đất, …).
     properties_div = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "properties")))
     property_checkboxes = properties_div.find_elements(By.TAG_NAME, "input")
     checkbox = random.choice(property_checkboxes)
     checkbox.click()
 
-    # 4. Click nút "Tìm kiếm"
+    # 3. Click nút "Tìm kiếm"
     time.sleep(0.5)
     search_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//input[@value='Tìm kiếm']")))
     search_button.click()
 
     wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, ".content-item")))
 
-    # 5. Lấy dữ liệu các bài viết
+    # 4. Lấy tất cả dữ liệu(Tiêu đề, Mô tả, Địa chỉ, Diện tích, Giá) hiển thị ở bài viết.
     titles = []
     descriptions = []
     addresses = []
@@ -47,9 +48,9 @@ def crawl_data():
 
     posts = driver.find_elements(By.CSS_SELECTOR, ".content-item")
     print(f"Tìm thấy {len(posts)} bài viết")
-
     main_window = driver.current_window_handle
-
+    
+    # 5. Lấy tất cả dữ liệu của các trang.
     for post in posts:
         try:
             # Lấy link và click vào bài viết
@@ -64,8 +65,6 @@ def crawl_data():
             # Chuyển sang tab mới
             new_window = [window for window in driver.window_handles if window != main_window][0]
             driver.switch_to.window(new_window)
-            
-            # Đợi trang load xong
             wait.until(EC.presence_of_element_located((By.CLASS_NAME, "detail")))
             
             # Lấy thông tin chi tiết
@@ -96,11 +95,11 @@ def crawl_data():
             areas.append(area)
             prices.append(price)
 
-            # Đóng tab chi tiết và quay lại tab kết quả tìm kiếm
+           
             driver.close()
             driver.switch_to.window(main_window)
             
-            # Đợi ngẫu nhiên 0.5-1 giây
+           
             time.sleep(random.uniform(0.5, 1))
             
         except Exception as e:
@@ -132,10 +131,10 @@ def crawl_data():
 
     print(f"Đã lưu dữ liệu vào file: {filename}")
     driver.quit()
-
+    
+    
+# 7. Set lịch chạy vào lúc 6h sáng hằng ngày.
 schedule.every().day.at("06:0000").do(crawl_data)
-
-
 while True:
     schedule.run_pending()
     time.sleep(60)
